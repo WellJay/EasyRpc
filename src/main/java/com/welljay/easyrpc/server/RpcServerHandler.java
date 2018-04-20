@@ -1,7 +1,5 @@
 package com.welljay.easyrpc.server;
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
 import com.welljay.easyrpc.annotation.RpcService;
 import com.welljay.easyrpc.util.AnnoManageUtil;
 import io.netty.channel.ChannelHandlerContext;
@@ -9,7 +7,6 @@ import io.netty.channel.ChannelInboundHandlerAdapter;
 import net.sf.cglib.reflect.FastClass;
 import net.sf.cglib.reflect.FastMethod;
 
-import javax.annotation.PostConstruct;
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.List;
@@ -37,9 +34,8 @@ public class RpcServerHandler extends ChannelInboundHandlerAdapter {
 
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
-        RpcRequest request = JSON.parseObject((String) msg, RpcRequest.class);
-        RpcResponse response = handle(request);
-        ctx.writeAndFlush(JSON.toJSONString(response));
+        RpcRequest request = (RpcRequest) msg;
+        ctx.writeAndFlush(request);
     }
 
     @Override

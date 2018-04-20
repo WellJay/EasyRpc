@@ -1,5 +1,9 @@
 package com.welljay.easyrpc.client;
 
+import com.welljay.easyrpc.serializer.RpcDecoder;
+import com.welljay.easyrpc.serializer.RpcEncoder;
+import com.welljay.easyrpc.server.RpcRequest;
+import com.welljay.easyrpc.server.RpcResponse;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
@@ -28,7 +32,9 @@ public class RpcClient {
             b.handler(new ChannelInitializer<SocketChannel>() {
                 @Override
                 public void initChannel(SocketChannel ch) throws Exception {
-                    ch.pipeline().addLast(new StringEncoder()).addLast(new StringDecoder()).addLast(new RpcClientHandler());
+                    ch.pipeline().addLast(new RpcEncoder(RpcRequest.class))
+                            .addLast(new RpcDecoder(RpcResponse.class))
+                            .addLast(new RpcClientHandler());
                 }
             });
 

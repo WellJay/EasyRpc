@@ -1,15 +1,11 @@
 package com.welljay.easyrpc.client;
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
 import com.welljay.easyrpc.server.RpcRequest;
 import com.welljay.easyrpc.server.RpcResponse;
-import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
-import io.netty.util.CharsetUtil;
 
 import java.util.UUID;
 
@@ -27,8 +23,7 @@ public class RpcClientHandler extends ChannelInboundHandlerAdapter {
         rpcRequest.setMethodName("hello");
         rpcRequest.setClassName("com.welljay.easyrpc.service.impl.EchoServiceImpl");
         //给服务器发消息
-        String jsonStr = JSON.toJSONString(rpcRequest);
-        ChannelFuture channelFuture = ctx.channel().writeAndFlush(jsonStr);
+        ChannelFuture channelFuture = ctx.channel().writeAndFlush(rpcRequest);
         channelFuture.addListener((ChannelFutureListener) rfuture -> {
             if (!rfuture.isSuccess()) {
                 System.out.println(rfuture);
@@ -39,7 +34,7 @@ public class RpcClientHandler extends ChannelInboundHandlerAdapter {
 
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
-        RpcResponse rpcResponse = JSON.parseObject((String) msg, RpcResponse.class);
+        RpcResponse rpcResponse = (RpcResponse) msg;
         try {
             System.out.println(rpcResponse.getResult());
             ctx.close();
