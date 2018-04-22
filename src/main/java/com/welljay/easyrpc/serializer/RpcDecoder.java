@@ -27,9 +27,22 @@ public class RpcDecoder extends ByteToMessageDecoder {
 
     @Override
     protected void decode(ChannelHandlerContext ctx, ByteBuf in, List<Object> out) throws Exception {
-        Input input = new Input(new ByteBufInputStream(in));
-        RpcRequest request = kryo.readObject(input, RpcRequest.class);
-        out.add(request);
-        input.close();
+        if (in.readableBytes() < 2) {
+            return;
+        }
+        in.markReaderIndex();
+
+        int len = in.readUnsignedShort();
+
+        if (in.readableBytes() < len) {
+            in.resetReaderIndex();
+            return;
+        }
+
+        byte[] buf = new byte[len];
+        in.readBytes(buf);
+        Input input = new Input(buf);
+        Object object = kryo.readClassAndObject(input);
+        out.add(object);
     }
 }

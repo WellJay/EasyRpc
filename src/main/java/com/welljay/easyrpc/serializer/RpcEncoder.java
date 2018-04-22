@@ -17,21 +17,22 @@ import java.io.ByteArrayOutputStream;
 public class RpcEncoder extends MessageToByteEncoder {
 
     private Kryo kryo;
-    private Class<?> genericClass;
     public RpcEncoder(Class<?> genericClass) {
-        this.genericClass = genericClass;
         kryo=new Kryo();
         kryo.register(genericClass);
     }
 
     @Override
     protected void encode(ChannelHandlerContext ctx, Object msg, ByteBuf out) throws Exception {
-        Output output = new Output(new ByteBufOutputStream(out));
+        ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+        Output output = new Output(outStream, 4096);
+
         kryo.writeClassAndObject(output, msg);
-        byte[] buffer = output.getBuffer();
-        out.writeInt(buffer.length);
-        out.writeBytes(buffer);
-        output.close();
+        output.flush();
+
+        byte[] outArray = outStream.toByteArray();
+        out.writeShort(outArray.length);
+        out.writeBytes(outArray);
     }
 
 }
