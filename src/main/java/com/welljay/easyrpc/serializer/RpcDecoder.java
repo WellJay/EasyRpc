@@ -2,9 +2,7 @@ package com.welljay.easyrpc.serializer;
 
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.io.Input;
-import com.welljay.easyrpc.server.RpcRequest;
 import io.netty.buffer.ByteBuf;
-import io.netty.buffer.ByteBufInputStream;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.ByteToMessageDecoder;
 
@@ -16,13 +14,13 @@ import java.util.List;
  */
 public class RpcDecoder extends ByteToMessageDecoder {
 
-    private Kryo kryo;
-    private Class<?> genericClass;
+    private final Kryo kryo;
+    private final Input input;
 
     public RpcDecoder(Class<?> genericClass) {
-        this.genericClass = genericClass;
         kryo = new Kryo();
         kryo.register(genericClass);
+        input = new Input();
     }
 
     @Override
@@ -41,7 +39,9 @@ public class RpcDecoder extends ByteToMessageDecoder {
 
         byte[] buf = new byte[len];
         in.readBytes(buf);
-        Input input = new Input(buf);
+
+        input.setBuffer(buf);
+
         Object object = kryo.readClassAndObject(input);
         out.add(object);
     }
