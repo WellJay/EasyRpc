@@ -17,19 +17,17 @@ public class RpcEncoder extends MessageToByteEncoder {
     public static final int BUFFER_SIZE = 4096;
     private final Kryo kryo;
     private final Output output;
+    private final ByteArrayOutputStream outStream = new ByteArrayOutputStream();
 
     public RpcEncoder(Class<?> genericClass) {
         kryo = new Kryo();
         kryo.register(genericClass);
         output = new Output(BUFFER_SIZE);
+        output.setOutputStream(outStream);
     }
 
     @Override
     protected void encode(ChannelHandlerContext ctx, Object msg, ByteBuf out) throws Exception {
-        ByteArrayOutputStream outStream = new ByteArrayOutputStream();
-
-        output.setOutputStream(outStream);
-
         kryo.writeClassAndObject(output, msg);
         output.flush();
 

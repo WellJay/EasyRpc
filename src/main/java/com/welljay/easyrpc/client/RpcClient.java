@@ -9,9 +9,6 @@ import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
-import io.netty.handler.codec.serialization.ObjectEncoder;
-import io.netty.handler.codec.string.StringDecoder;
-import io.netty.handler.codec.string.StringEncoder;
 
 /**
  * @author wenjie
@@ -19,33 +16,62 @@ import io.netty.handler.codec.string.StringEncoder;
  */
 public class RpcClient {
 
-    public static void main(String[] args) throws Exception {
-        String host = "127.0.0.1";
-        int port = 9000;
-        EventLoopGroup workerGroup = new NioEventLoopGroup();
+    private static final Integer THREADS_NUM = Runtime.getRuntime().availableProcessors() + 1;
+    private String host;
+    private int port;
+    private Bootstrap bootstrap;
+    private Channel channel;
+    private EventLoopGroup workerGroup;
 
+    public RpcClient(String host, int port) {
+        this.host = host;
+        this.port = port;
+        init();
+    }
+
+    public void init() {
+        workerGroup = new NioEventLoopGroup(THREADS_NUM);
+        bootstrap = new Bootstrap();
+        bootstrap.group(workerGroup);
+        bootstrap.channel(NioSocketChannel.class);
+        bootstrap.option(ChannelOption.SO_KEEPALIVE, true);
+        bootstrap.handler(new ChannelInitializer<SocketChannel>() {
+            @Override
+            public void initChannel(SocketChannel ch) throws Exception {
+                ch.pipeline().addLast(new RpcEncoder(RpcRequest.class))
+                        .addLast(new RpcDecoder(RpcResponse.class))
+                        .addLast(new RpcClientHandler());
+            }
+        });
+    }
+
+    public void connect() {
+        ChannelFuture f = null;
         try {
-            Bootstrap b = new Bootstrap();
-            b.group(workerGroup);
-            b.channel(NioSocketChannel.class);
-            b.option(ChannelOption.SO_KEEPALIVE, true);
-            b.handler(new ChannelInitializer<SocketChannel>() {
-                @Override
-                public void initChannel(SocketChannel ch) throws Exception {
-                    ch.pipeline().addLast(new RpcEncoder(RpcRequest.class))
-                            .addLast(new RpcDecoder(RpcResponse.class))
-                            .addLast(new RpcClientHandler());
-                }
-            });
+            f = bootstrap.connect(host, port).sync();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        this.channel = f.channel();
+    }
 
-            ChannelFuture f = b.connect(host, port).sync();
-
-            f.channel().closeFuture().sync();
-
-
+    public void close() {
+        try {
+            this.channel.closeFuture().sync();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         } finally {
             workerGroup.shutdownGracefully();
         }
+    }
+
+    public synchronized void send(RpcRequest rpcRequest) {
+        ChannelFuture channelFuture = channel.writeAndFlush(rpcRequest);
+        channelFuture.addListener((ChannelFutureListener) rfuture -> {
+            if (!rfuture.isSuccess()) {
+                System.out.println(rfuture);
+            }
+        });
     }
 
 }
