@@ -23,12 +23,12 @@ import java.util.Map;
 public class RpcServerHandler extends ChannelInboundHandlerAdapter {
 
 
-    private static final Map<String, Object> classMap = new HashMap<>();
+    private static final Map<String, Object> CLASS_MAP = new HashMap<>();
 
     public RpcServerHandler() throws ClassNotFoundException, IllegalAccessException, InstantiationException {
         List<Class<?>> classes = AnnoManageUtil.getPackageController("com.welljay.easyrpc.service.impl", RpcService.class);
         for (Class<?> aClass : classes) {
-            classMap.put(aClass.getName(), Class.forName(aClass.getName()).newInstance());
+            CLASS_MAP.put(aClass.getName(), Class.forName(aClass.getName()).newInstance());
         }
     }
 
@@ -60,13 +60,13 @@ public class RpcServerHandler extends ChannelInboundHandlerAdapter {
         String className = request.getClassName();
         String methodName = request.getMethodName();
 
-        Object clazz = classMap.get(className);
+        Object clazz = CLASS_MAP.get(className);
 
         FastClass serviceFastClass = FastClass.create(clazz.getClass());
-        FastMethod method = serviceFastClass.getMethod(methodName, null);
+        FastMethod method = serviceFastClass.getMethod(methodName, request.getParameterTypes());
         Object result = null;
         try {
-            result = method.invoke(clazz, null);
+            result = method.invoke(clazz, request.getParameters());
         } catch (InvocationTargetException e) {
             e.printStackTrace();
         }

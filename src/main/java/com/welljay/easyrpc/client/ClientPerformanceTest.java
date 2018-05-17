@@ -17,13 +17,18 @@ public class ClientPerformanceTest {
 
     private static AtomicLong callAmount = new AtomicLong(0L);
 
-    public static void main(String[] args) throws InterruptedException {
+    public static void main(String[] args) throws InterruptedException, ClassNotFoundException, NoSuchMethodException {
 
         RpcRequest rpcRequest = new RpcRequest();
         rpcRequest.setRequestId(UUID.randomUUID().toString());
         rpcRequest.setMethodName("hello");
+        Object[] params = {"kok"};
+        rpcRequest.setParameters(params);
         rpcRequest.setClassName("com.welljay.easyrpc.service.impl.EchoServiceImpl");
 
+        Class<?>[] parameterTypesArr = getMethodParamTypesByParams(params);
+
+        rpcRequest.setParameterTypes(parameterTypesArr);
 
         int coreCount = Runtime.getRuntime().availableProcessors();
 
@@ -59,5 +64,13 @@ public class ClientPerformanceTest {
         System.out.println(sb.toString());
 
         System.exit(1);
+    }
+
+    private static Class<?>[] getMethodParamTypesByParams(Object[] params) {
+        Class<?>[] parameterTypesArr = new Class<?>[params.length];
+        for (int i = 0; i < params.length; i++) {
+            parameterTypesArr[i] = params[i].getClass();
+        }
+        return parameterTypesArr;
     }
 }

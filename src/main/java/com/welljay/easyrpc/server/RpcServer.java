@@ -40,7 +40,10 @@ public class RpcServer {
 
             ChannelFuture f = bootstrap.bind(port).sync();
 
+            System.out.println("server started...");
+
             f.channel().closeFuture().sync();
+
         } finally {
             workerGroup.shutdownGracefully();
             bossGroup.shutdownGracefully();

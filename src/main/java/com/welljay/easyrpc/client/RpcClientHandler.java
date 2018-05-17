@@ -15,7 +15,7 @@ public class RpcClientHandler extends ChannelInboundHandlerAdapter {
         RpcResponse rpcResponse = (RpcResponse) msg;
         try {
             System.out.println(rpcResponse.getResult());
-        }finally {
+        } finally {
             ctx.close();
         }
     }

@@ -16,6 +16,11 @@ public class EchoServiceImpl implements EchoService {
     }
 
     @Override
+    public String hello(String name) {
+        return "hello " + name;
+    }
+
+    @Override
     public String test() {
         return "test";
     }

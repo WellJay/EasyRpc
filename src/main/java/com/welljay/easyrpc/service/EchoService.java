@@ -8,5 +8,7 @@ public interface EchoService {
 
     String hello();
 
+    String hello(String name);
+
     String test();
 }
