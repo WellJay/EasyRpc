@@ -1,5 +1,6 @@
-package com.welljay.easyrpc.client;
+package com.welljay.easyrpc.client.test;
 
+import com.welljay.easyrpc.client.RpcClient;
 import com.welljay.easyrpc.server.RpcRequest;
 
 import java.util.UUID;
