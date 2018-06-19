@@ -17,7 +17,7 @@ import io.netty.channel.socket.nio.NioServerSocketChannel;
  */
 public class RpcServer {
 
-    public static final int port = 9000;
+    public static final int port = 9999;
 
     public static void main(String[] args) throws InterruptedException {
         EventLoopGroup bossGroup = new NioEventLoopGroup();

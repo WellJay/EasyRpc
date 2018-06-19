@@ -25,7 +25,7 @@ public class ClientPerformanceTest {
         rpcRequest.setMethodName("hello");
         Object[] params = {"kok"};
         rpcRequest.setParameters(params);
-        rpcRequest.setClassName("com.welljay.easyrpc.service.impl.EchoServiceImpl");
+        rpcRequest.setClassName("com.welljay.EchoServiceImpl");
 
         Class<?>[] parameterTypesArr = getMethodParamTypesByParams(params);
 

@@ -1,7 +1,5 @@
 package com.welljay.easyrpc.util;
 
-import com.welljay.easyrpc.annotation.RpcService;
-
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.lang.annotation.Annotation;

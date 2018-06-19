@@ -5,9 +5,18 @@ import com.welljay.easyrpc.server.RpcRequest;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
 import java.util.UUID;
 
 public class ProxyHandler implements InvocationHandler {
+
+    private Class<?> interfaceClass;
+
+
+    public Object bind(Class<?> cls) {
+        this.interfaceClass = cls;
+        return Proxy.newProxyInstance(cls.getClassLoader(), new Class[] {interfaceClass}, this);
+    }
 
 
     private static Class<?>[] getMethodParamTypesByParams(Object[] params) {
@@ -34,7 +43,7 @@ public class ProxyHandler implements InvocationHandler {
 
 
 
-        RpcClient rpcClient = new RpcClient("127.0.0.1", 9000);
+        RpcClient rpcClient = new RpcClient("127.0.0.1", 9999);
         rpcClient.connect();
         rpcClient.send(rpcRequest);
         rpcClient.close();
