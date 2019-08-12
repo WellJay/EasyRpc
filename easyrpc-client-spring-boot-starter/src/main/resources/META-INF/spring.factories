@@ -1,1 +1,0 @@
-org.springframework.boot.autoconfigure.EnableAutoConfiguration=com.welljay.easyrpc.starter.client.configuration.RpcClientAutoConfigure
