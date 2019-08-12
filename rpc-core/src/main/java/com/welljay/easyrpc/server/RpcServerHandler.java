@@ -25,8 +25,8 @@ public class RpcServerHandler extends ChannelInboundHandlerAdapter {
 
     private static final Map<String, Object> CLASS_MAP = new HashMap<>();
 
-    public RpcServerHandler() throws ClassNotFoundException, IllegalAccessException, InstantiationException {
-        List<Class<?>> classes = AnnoManageUtil.getPackageController("com.welljay.easyrpc.service.impl", RpcService.class);
+    public RpcServerHandler(String backPackage) throws ClassNotFoundException, IllegalAccessException, InstantiationException {
+        List<Class<?>> classes = AnnoManageUtil.getPackageController(backPackage, RpcService.class);
         for (Class<?> aClass : classes) {
             CLASS_MAP.put(aClass.getInterfaces()[0].getName(), Class.forName(aClass.getName()).newInstance());
         }

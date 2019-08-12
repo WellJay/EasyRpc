@@ -2,7 +2,7 @@ package com.welljay.easyrpc.starter.client.register;
 
 import com.welljay.easyrpc.client.RpcClient;
 import com.welljay.easyrpc.server.RpcRequest;
-import com.welljay.easyrpc.starter.client.properties.EasyRpcProperties;
+import com.welljay.easyrpc.starter.client.properties.EasyRpcClientProperties;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
@@ -44,7 +44,7 @@ public class ProxyHandler implements InvocationHandler {
 
 
         //todo 可优化
-        RpcClient rpcClient = new RpcClient(EasyRpcProperties.IP, EasyRpcProperties.PORT);
+        RpcClient rpcClient = new RpcClient(EasyRpcClientProperties.IP, EasyRpcClientProperties.PORT);
         rpcClient.connect();
         rpcClient.send(rpcRequest);
         rpcClient.close();

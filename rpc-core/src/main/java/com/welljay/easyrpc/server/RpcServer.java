@@ -19,7 +19,7 @@ public class RpcServer {
 
     public static final int port = 9999;
 
-    public static void main(String[] args) throws InterruptedException {
+    public static void start(String backPackage) throws InterruptedException {
         EventLoopGroup bossGroup = new NioEventLoopGroup();
         EventLoopGroup workerGroup = new NioEventLoopGroup(8);
 
@@ -28,11 +28,16 @@ public class RpcServer {
             bootstrap.group(bossGroup, workerGroup)
                     .channel(NioServerSocketChannel.class)
                     .childHandler(new ChannelInitializer<SocketChannel>() {
+
+                        private final RpcEncoder rpcEncoder = new RpcEncoder(RpcResponse.class);
+                        private final RpcDecoder rpcDecoder = new RpcDecoder(RpcRequest.class);
+                        private final RpcServerHandler rpcServerHandler = new RpcServerHandler(backPackage);
+
                         @Override
-                        protected void initChannel(SocketChannel ch) throws Exception {
-                            ch.pipeline().addLast(new RpcEncoder(RpcResponse.class))
-                                    .addLast(new RpcDecoder(RpcRequest.class))
-                                    .addLast(new RpcServerHandler());
+                        protected void initChannel(SocketChannel ch) {
+                            ch.pipeline().addLast(rpcEncoder)
+                                    .addLast(rpcDecoder)
+                                    .addLast(rpcServerHandler);
                         }
                     })
                     .option(ChannelOption.SO_BACKLOG, 128)
@@ -44,9 +49,16 @@ public class RpcServer {
 
             f.channel().closeFuture().sync();
 
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        } catch (InstantiationException e) {
+            e.printStackTrace();
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
         } finally {
             workerGroup.shutdownGracefully();
             bossGroup.shutdownGracefully();
         }
     }
+
 }

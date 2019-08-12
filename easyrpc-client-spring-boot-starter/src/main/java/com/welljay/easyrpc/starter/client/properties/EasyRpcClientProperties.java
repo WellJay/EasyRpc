@@ -7,8 +7,8 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  * @description
  * @date 2019/8/12 20:36
  */
-@ConfigurationProperties(prefix = "easy-rpc")
-public class EasyRpcProperties {
+@ConfigurationProperties(prefix = "easy-rpc.client")
+public class EasyRpcClientProperties {
 
     public static String IP = "127.0.0.1";
 

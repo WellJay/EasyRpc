@@ -11,6 +11,7 @@
     <modules>
         <module>rpc-core</module>
         <module>easyrpc-client-spring-boot-starter</module>
+        <module>easyrpc-server-spring-boot-starter</module>
     </modules>
 
 
