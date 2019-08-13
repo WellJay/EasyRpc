@@ -24,11 +24,10 @@ public class EasyRpcServerConfiguration implements CommandLineRunner {
 
         try {
             RpcServer.start(basePackage);
+            System.out.println("EasyRpc启动完成...");
         } catch (Exception e) {
             System.err.println("EasyPrc启动失败...");
             e.printStackTrace();
         }
-
-        System.out.println("EasyRpc启动完成...");
     }
 }

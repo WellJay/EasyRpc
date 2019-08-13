@@ -35,7 +35,7 @@ public class ProxyHandler implements InvocationHandler {
         rpcRequest.setMethodName(method.getName());
 
         rpcRequest.setParameters(args);
-        rpcRequest.setClassName(method.getDeclaringClass().getName());
+        rpcRequest.setClassName(method.getDeclaringClass().getSimpleName());
 
         if(null != args) {
             Class<?>[] parameterTypesArr = getMethodParamTypesByParams(args);

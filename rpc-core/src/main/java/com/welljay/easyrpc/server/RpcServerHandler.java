@@ -2,6 +2,7 @@ package com.welljay.easyrpc.server;
 
 import com.welljay.easyrpc.annotation.RpcService;
 import com.welljay.easyrpc.util.AnnoManageUtil;
+import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import net.sf.cglib.reflect.FastClass;
@@ -20,6 +21,7 @@ import java.util.Map;
 /**
  * 处理rpc
  */
+@ChannelHandler.Sharable
 public class RpcServerHandler extends ChannelInboundHandlerAdapter {
 
 
@@ -28,7 +30,7 @@ public class RpcServerHandler extends ChannelInboundHandlerAdapter {
     public RpcServerHandler(String backPackage) throws ClassNotFoundException, IllegalAccessException, InstantiationException {
         List<Class<?>> classes = AnnoManageUtil.getPackageController(backPackage, RpcService.class);
         for (Class<?> aClass : classes) {
-            CLASS_MAP.put(aClass.getInterfaces()[0].getName(), Class.forName(aClass.getName()).newInstance());
+            CLASS_MAP.put(aClass.getInterfaces()[0].getSimpleName(), Class.forName(aClass.getName()).newInstance());
         }
     }
 

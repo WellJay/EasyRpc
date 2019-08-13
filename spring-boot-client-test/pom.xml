@@ -9,7 +9,9 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>easyrpc-server-spring-boot-starter</artifactId>
+    <packaging>jar</packaging>
+
+    <artifactId>spring-boot-client-test</artifactId>
 
     <dependencyManagement>
         <dependencies>
@@ -27,26 +29,31 @@
     <dependencies>
         <dependency>
             <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-autoconfigure</artifactId>
+            <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
+
         <dependency>
             <groupId>com.welljay</groupId>
-            <artifactId>rpc-core</artifactId>
+            <artifactId>easyrpc-client-spring-boot-starter</artifactId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
 
         <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-configuration-processor</artifactId>
-            <optional>true</optional>
-            <version>1.5.2.RELEASE</version>
+            <groupId>com.welljay</groupId>
+            <artifactId>spring-boot-test-jar</artifactId>
+            <version>1.0-SNAPSHOT</version>
         </dependency>
 
-        <dependency>
-            <groupId>org.projectlombok</groupId>
-            <artifactId>lombok</artifactId>
-            <scope>provided</scope>
-        </dependency>
     </dependencies>
+
+    <build>
+        <finalName>spring-boot-client-test</finalName>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
 
 </project>

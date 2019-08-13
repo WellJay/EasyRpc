@@ -24,20 +24,21 @@ public class RpcServer {
         EventLoopGroup workerGroup = new NioEventLoopGroup(8);
 
         try {
+
+            final RpcServerHandler RPC_SERVER_HANDLER = new RpcServerHandler(backPackage);
+
             ServerBootstrap bootstrap = new ServerBootstrap();
             bootstrap.group(bossGroup, workerGroup)
                     .channel(NioServerSocketChannel.class)
                     .childHandler(new ChannelInitializer<SocketChannel>() {
 
-                        private final RpcEncoder rpcEncoder = new RpcEncoder(RpcResponse.class);
-                        private final RpcDecoder rpcDecoder = new RpcDecoder(RpcRequest.class);
-                        private final RpcServerHandler rpcServerHandler = new RpcServerHandler(backPackage);
 
                         @Override
                         protected void initChannel(SocketChannel ch) {
-                            ch.pipeline().addLast(rpcEncoder)
-                                    .addLast(rpcDecoder)
-                                    .addLast(rpcServerHandler);
+                            //要new出来，不能使用单例，否则会报共享异常
+                            ch.pipeline().addLast(new RpcEncoder(RpcResponse.class))
+                                    .addLast(new RpcDecoder(RpcRequest.class))
+                                    .addLast(RPC_SERVER_HANDLER);
                         }
                     })
                     .option(ChannelOption.SO_BACKLOG, 128)
