@@ -18,8 +18,7 @@ public class HelloController {
 
     @GetMapping("/hello")
     public String hello() {
-        String hello = helloService.hello();
-        return "11";
+        return helloService.hello();
     }
 
 }

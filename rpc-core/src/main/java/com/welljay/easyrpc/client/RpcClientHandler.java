@@ -1,28 +1,22 @@
 package com.welljay.easyrpc.client;
 
+import com.welljay.easyrpc.client.future.FutureHolder;
+import com.welljay.easyrpc.client.future.RpcFuture;
 import com.welljay.easyrpc.server.RpcResponse;
 import io.netty.channel.ChannelHandlerContext;
-import io.netty.channel.ChannelInboundHandlerAdapter;
+import io.netty.channel.SimpleChannelInboundHandler;
 
 /**
  * @author wenjie
  * @date 2018/4/20 0020 13:49
  */
-public class RpcClientHandler extends ChannelInboundHandlerAdapter {
+public class RpcClientHandler extends SimpleChannelInboundHandler<RpcResponse> {
 
     @Override
-    public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
-        RpcResponse rpcResponse = (RpcResponse) msg;
-        try {
-            System.out.println(rpcResponse.getResult());
-        } finally {
-            ctx.close();
+    protected void channelRead0(ChannelHandlerContext channelHandlerContext, RpcResponse rpcResponse) throws Exception {
+        RpcFuture rpcFuture = FutureHolder.getAndRemoveFuture(rpcResponse.getRequestId());
+        if (rpcFuture != null) {
+            rpcFuture.setSuccess(rpcResponse);
         }
-    }
-
-    @Override
-    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
-        cause.printStackTrace();
-        ctx.close();
     }
 }

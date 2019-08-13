@@ -9,8 +9,10 @@ A simple rpc framework implemented with netty for learning
 - ~~easyrpc-client-spring-boot-starter~~
 - ~~spring-boot-client-test~~
 - ~~spring-boot-server-test~~
-- 客户端使用线程池调用服务端
-- 异步接口返回数据
+- ~~异步接口返回数据~~
+- ~~客户端使用线程池调用服务端~~
+- Request Cache
+- 注册中心
 - disruptor
 
 ### Serialization

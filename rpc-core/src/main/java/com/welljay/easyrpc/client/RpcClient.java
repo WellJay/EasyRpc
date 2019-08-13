@@ -1,5 +1,7 @@
 package com.welljay.easyrpc.client;
 
+import com.welljay.easyrpc.client.future.FutureHolder;
+import com.welljay.easyrpc.client.future.RpcFuture;
 import com.welljay.easyrpc.serializer.RpcDecoder;
 import com.welljay.easyrpc.serializer.RpcEncoder;
 import com.welljay.easyrpc.server.RpcRequest;
@@ -9,6 +11,8 @@ import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
+
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author wenjie
@@ -65,13 +69,31 @@ public class RpcClient {
         }
     }
 
-    public synchronized void send(RpcRequest rpcRequest) {
+    public synchronized Object send(RpcRequest rpcRequest) {
         ChannelFuture channelFuture = channel.writeAndFlush(rpcRequest);
-        channelFuture.addListener((ChannelFutureListener) rfuture -> {
-            if (!rfuture.isSuccess()) {
-                System.out.println(rfuture);
+        RpcFuture rpcFuture = new RpcFuture(channelFuture.channel().eventLoop());
+        channelFuture.addListener((ChannelFutureListener) future -> {
+            if (future.isSuccess()) {
+                channel.closeFuture().addListener((ChannelFutureListener) closefuture -> {
+                    System.out.println("stop client");
+                });
+                FutureHolder.registerFuture(rpcRequest.getRequestId(), rpcFuture);
+            } else {
+                rpcFuture.tryFailure(future.cause());
             }
         });
+        RpcResponse rpcResponse = null;
+        try {
+            //没用listener和getNow的方式是因为客户端是同步的，同时简便实现
+            rpcResponse = rpcFuture.get(5, TimeUnit.SECONDS);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        if (rpcResponse.getResult() != null) {
+            return rpcResponse.getResult();
+        } else {
+            return null;
+        }
     }
 
 }
