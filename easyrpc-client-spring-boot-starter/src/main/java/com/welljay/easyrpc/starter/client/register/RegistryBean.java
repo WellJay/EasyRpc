@@ -11,6 +11,11 @@ import org.springframework.beans.factory.support.GenericBeanDefinition;
 
 import java.util.List;
 
+/**
+ * @description 动态注入bean，并使用FactoryBean来生成接口的动态代理类
+ * @author: welljay
+ */
+//还可以ImportBeanDefinitionRegistrar
 public class RegistryBean implements BeanDefinitionRegistryPostProcessor {
 
     @Override
