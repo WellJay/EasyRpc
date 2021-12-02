@@ -13,7 +13,7 @@ A simple rpc framework implemented with netty for learning
 - ✔ 客户端使用线程池调用服务端
 - Request Cache
 - 注册中心
-- disruptor
+- distributed
 
 ### Serialization
 [kryo](https://github.com/EsotericSoftware/kryo)
